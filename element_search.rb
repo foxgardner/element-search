@@ -1,4 +1,4 @@
- # ["Abbr", "Element", Atomic Number, Atomic Mass, Row, Col, "Type"]
+ # ["Abbr", "Element", Atomic Number, [Atomic Mass, Row, Col], "Type"]
  elements = ["H", "Hydrogen", "1", [1.008, 1, 1], "Nonmetal"],
             ["He", "Helium", "2", [4.0026, 1, 18], "Noble Gas"],
             ["Li", "Lithium", "3", [6.94, 2, 1], "Alkali Metal"],
@@ -72,7 +72,7 @@
             ["Lu", "Lutetium", "71", [174.97, 6, 18], "Lanthanide"],
             ["Hf", "Hafnium", "72", [178.49, 6, 4], "Transition Metal"],
             ["Ta", "Tantalum", "73", [180.95, 6, 5], "Transition Metal"],
-            ["W", "Tungstem", "74", [183.84, 6, 6], "Transition Metal"],
+            ["W", "Tungsten", "74", [183.84, 6, 6], "Transition Metal"],
             ["Re", "Rhenium", "75", [186.21, 6, 7], "Transition Metal"],
             ["Os", "Osmium", "76", [190.23, 6, 8], "Transition Metal"],
             ["Ir", "Iridium", "77", [192.22, 6, 9], "Transition Metal"],
@@ -112,20 +112,24 @@
             ["Rg", "Roentgenium", "111", [272, 7, 11], "Transition Metal"],
             ["Cn", "Copernicium", "112", [277, 7, 12], "Transition Metal"]
 
-puts  'Enter any of these.. Abbr | Name | Atomic # | Type'
+puts  'Enter any of these.. Abbr | Name | Atomic # | Group'
 $response = gets.chomp
 
 arr = []
 elements.length.times do |i|
     arr.push(i) if elements[i].include?("#{$response}").to_s == "true"
 end
+
+output = "#{arr.length} element#{"s" if arr.length != 1} found"
+puts output
+
 arr.length.times do |j|
     $answer = arr[j]
     output = ""
-    output << "Element: #{elements[$answer][1].to_s} (#{elements[$answer][0].to_s})"
-    output << " | Atomic Number: #{elements[$answer][2].to_s}"
-    output << " | Atomic Weight: #{elements[$answer][3][0].to_s}"
-    output << " | Type: #{elements[$answer][4].to_s}"
+    output << "Elm: #{elements[$answer][1].to_s} (#{elements[$answer][0].to_s})"
+    output << " | AtNo: #{elements[$answer][2].to_s}"
+    output << " | AtW: #{elements[$answer][3][0].to_s}"
+    output << " | Group: #{elements[$answer][4].to_s}"
     output << " | Col: #{elements[$answer][3][2].to_s}"
     puts output
 end
