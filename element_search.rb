@@ -112,7 +112,7 @@
             ["Rg", "Roentgenium", 111, [272, 7, 11], "Transition Metal"],
             ["Cn", "Copernicium", 112, [277, 7, 12], "Transition Metal"]
 
-puts  'Enter any of these.. Abbr | Name | Atomic # | Atomic Mass'
+puts  'Enter any of these.. Abbr | Name | Atomic # | Type'
 $response = gets.chomp                                              # Gets response.
 
 $i = 0
@@ -125,7 +125,7 @@ output = ""
 output << "Abbreviation: " + elements[$answer][0].to_s              # Picks out the items within the
 output << " | Element: " + elements[$answer][1].to_s                # subarray which number matches
 output << " | Atomic Number: " + elements[$answer][2].to_s          # the variable defined earlier.
-output << " | Atomic Weight: " + elements[$answer][3][0].to_s          # Yes, I could make this more
+output << " | Atomic Weight: " + elements[$answer][3][0].to_s       # Yes, I could make this more
 output << " | Type: " + elements[$answer][4].to_s                   # compact, but it is more readable
-output << " | Col: " + elements[$answer][3][2].to_s                    # and easier to edit.
+output << " | Col: " + elements[$answer][3][2].to_s                 # and easier to edit.
 puts output                                                         # Prints findings.
