@@ -36,19 +36,21 @@ $
 ```
 It returns all elements of that group.
 
-You can ask it to calculate particles.
+You can ask it to calculate particles for neutral elements or single element ions.
+
+Here is an example for O<sup>2-</sup>.
 ```
 $ ruby element_search.rb
 Search the elements. Reply 'help' if needed.
-Fe particles
-n: 30 | p+: 26 | e-: 26
+O2- particles
+n: 8 | p+: 8 | e-: 10
 $
 ```
-Note: this does not work with ions yet.
+Note: this does not work with polyatomic ions.
 
 ### Later implementations?
 - Response if user enters a range numbers or weights. Such as entering ( AN 21-30 ) or ( AW 44.00-67.00 )
 - Elemental subgroups
-- Ion e-, p+, & n helper
+- Polyatomic ion e-, p+, & n calculator
 - Calculations for elections, protons, and neutrons. Such as entering ( Na p ) or ( Oxygen n)
 - Equasion balancing!?

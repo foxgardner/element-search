@@ -114,44 +114,61 @@
             ["Rg", "Roentgenium", "111", "272", "Row7", "Col11", "Transition Metal"],
             ["Cn", "Copernicium", "112", "277", "Row7", "Col12", "Transition Metal"]
 
-arr = []
-def list_elements (elements, arr)
+applicable_elements = []
+def list_elements (elements, applicable_elements)
     elements.length.times do |i|
-        arr.push(i) if elements[i].include?("#{$element}").to_s == "true"
+        applicable_elements.push(i) if elements[i].include?("#{$element}").to_s == "true"
     end
 end
 def response_helper
-    puts "Enter any of the following:"
-    puts "   Element             (Tungsten)"
-    puts "   Abbreviation        (W)"
-    puts "   Atomic number       (74)"
-    puts "   Row or column       (Row6) or (Col6)"
-    puts "   Element grouping    (Transition Metal)"
+    puts "To find elements enter any of the following:"
+    puts "   Element             (Oxygen)"
+    puts "   Abbreviation        (O)"
+    puts "   Atomic number       (8)"
+    puts "   Row or column       (Row2) or (Col16)"
+    puts "   Element grouping    (Nonmetal)"
+    puts ""
+    puts "To calculate particles add 'particles' to"
+    puts "the end of the element identifier. You can"
+    puts "also enter single element ions."
+    puts "                       (Oxygen particles)"
+    puts "                       (O particles)"
+    puts "                       (O2- particles)"
     $response = gets.chomp
 end
-def electron_calculator elements, arr
-    $electrons = elements[arr[0]][2].to_f.round
+def ion_helper elements, applicable_elements
+    $ion = $element[0...-2]
+    $charge = $element[-2, 2]
+    $charge_direction = $charge[-1, 1]
+    $charge_strength = $charge[-2, 1].to_i
+    $element = $ion
 end
-def proton_calculator elements, arr
-    $protons = elements[arr[0]][2].to_f.round
+def electron_calculator elements, applicable_elements
+    if $charge_direction == "+"
+        $electrons = $protons - $charge_strength.to_i
+    else
+        $electrons = $protons + $charge_strength.to_i
+    end
 end
-def neutron_calculator elements, arr
-    $mass_number = elements[arr[0]][3].to_f.round
+def proton_calculator elements, applicable_elements
+    $protons = elements[applicable_elements[0]][2].to_i
+end
+def neutron_calculator elements, applicable_elements
+    $mass_number = elements[applicable_elements[0]][3].to_f.round
     $neutrons = $mass_number - $protons
 end
-def subatomic_helper elements, arr
-    subatomic_arr = []
-    electron_calculator elements, arr
-    proton_calculator elements, arr
-    neutron_calculator elements, arr
+def subatomic_helper elements, applicable_elements
+    proton_calculator elements, applicable_elements
+    electron_calculator elements, applicable_elements
+    neutron_calculator elements, applicable_elements
     puts "n: #{$neutrons} | p+: #{$protons} | e-: #{$electrons}"
 end
-def element_helper elements, arr
-    output = "#{arr.length} elements found" unless arr.length == 1
-    puts output unless arr.length == 1
+def element_helper elements, applicable_elements
+    output = "#{applicable_elements.length} elements found" unless applicable_elements.length == 1
+    puts output unless applicable_elements.length == 1
 
-    arr.length.times do |j|
-        $answer = arr[j]
+    applicable_elements.length.times do |j|
+        $answer = applicable_elements[j]
     
         abbr = elements[$answer][0].to_s
         elm = elements[$answer][1].to_s
@@ -179,11 +196,12 @@ response_helper if $response == "help"
 
 if $response.include?(" particles")
     $element = $response[0...-10]
+    ion_helper elements, applicable_elements if $element.include?("+") || $element.include?("-")
 else
     $element = $response
 end
 
-list_elements elements, arr
+list_elements elements, applicable_elements
 
-element_helper elements, arr unless $response.include?(" particles")
-subatomic_helper elements, arr if $response.include?(" particles")
+element_helper elements, applicable_elements unless $response.include?(" particles")
+subatomic_helper elements, applicable_elements if $response.include?(" particles")
