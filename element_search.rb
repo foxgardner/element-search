@@ -1,5 +1,5 @@
- # ["Abbr", "Element", Atomic Number, [Atomic Mass, Row, Col], "Type"]
- 
+ # Dictionary & Functions
+ # ["Abbr", "Element", Atomic Number, Atomic Mass, Row, Col, "Type"]
  elements = ["H", "Hydrogen", "1", "1.008", "Row1", "Col1", "Nonmetal"],
             ["He", "Helium", "2", "4.0026", "Row1", "Col18", "Noble Gas"],
             ["Li", "Lithium", "3", "6.94", "Row2", "Col1", "Alkali Metal"],
@@ -114,10 +114,13 @@
             ["Rg", "Roentgenium", "111", "272", "Row7", "Col11", "Transition Metal"],
             ["Cn", "Copernicium", "112", "277", "Row7", "Col12", "Transition Metal"]
 
-puts  "Search the elements. Reply 'help' if needed."
-$response = gets.chomp
-
-if $response == "help"
+arr = []
+def list_elements (elements, arr)
+    elements.length.times do |i|
+        arr.push(i) if elements[i].include?("#{$element}").to_s == "true"
+    end
+end
+def response_helper
     puts "Enter any of the following:"
     puts "   Element             (Tungsten)"
     puts "   Abbreviation        (W)"
@@ -126,30 +129,61 @@ if $response == "help"
     puts "   Element grouping    (Transition Metal)"
     $response = gets.chomp
 end
-arr = []
-elements.length.times do |i|
-    arr.push(i) if elements[i].include?("#{$response}").to_s == "true"
+def electron_calculator elements, arr
+    $electrons = elements[arr[0]][2].to_f.round
+end
+def proton_calculator elements, arr
+    $protons = elements[arr[0]][2].to_f.round
+end
+def neutron_calculator elements, arr
+    $mass_number = elements[arr[0]][3].to_f.round
+    $neutrons = $mass_number - $protons
+end
+def subatomic_helper elements, arr
+    subatomic_arr = []
+    electron_calculator elements, arr
+    proton_calculator elements, arr
+    neutron_calculator elements, arr
+    puts "n: #{$neutrons} | p+: #{$protons} | e-: #{$electrons}"
+end
+def element_helper elements, arr
+    output = "#{arr.length} elements found" unless arr.length == 1
+    puts output unless arr.length == 1
+
+    arr.length.times do |j|
+        $answer = arr[j]
+    
+        abbr = elements[$answer][0].to_s
+        elm = elements[$answer][1].to_s
+        atno = elements[$answer][2].to_s
+        atw = elements[$answer][3].to_s
+        row = elements[$answer][4].to_s[3...9]
+        col = elements[$answer][5].to_s[3...9]
+        group = elements[$answer][6].to_s
+    
+        output = ""
+        output << "#{elm} (#{abbr})"
+        output << " | AtNo: #{atno}"
+        output << " | AtW: #{atw}"
+        output << " | Group: #{group}"
+        output << " | Col: #{col}"
+        puts output
+    end
+end
+ # End of Dictionary & Functions
+
+ # Puts together functions and definitions to make it work.
+puts  "Search the elements. Reply 'help' if needed."
+$response = gets.chomp
+response_helper if $response == "help"
+
+if $response.include?(" particles")
+    $element = $response[0...-10]
+else
+    $element = $response
 end
 
-output = "#{arr.length} elements found" unless arr.length == 1
-puts output unless arr.length == 1
+list_elements elements, arr
 
-# Yes, this could be condensed, but if anyone wants to edit it, this is so much easier.
-arr.length.times do |j|
-    $answer = arr[j]
-
-    elm = elements[$answer][1].to_s
-    abbr = elements[$answer][0].to_s
-    atno = elements[$answer][2].to_s
-    atw = elements[$answer][3].to_s
-    group = elements[$answer][6].to_s
-    col = elements[$answer][5].to_s[3...9]
-
-    output = ""
-    output << "#{elm} (#{abbr})"
-    output << " | AtNo: #{atno}"
-    output << " | AtW: #{atw}"
-    output << " | Group: #{group}"
-    output << " | Col: #{col}"
-    puts output
-end
+element_helper elements, arr unless $response.include?(" particles")
+subatomic_helper elements, arr if $response.include?(" particles")
