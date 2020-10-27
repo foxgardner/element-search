@@ -64,6 +64,20 @@ $
 ```
 Note: this does not yet work with polyatomic ions.
 
+You can calculate the makeup of molecules.
+```
+$ ruby element_search.rb
+Search the elements. Reply 'help' if needed.
+C8H10N4O2
+C8H10N4O2 | Mass: 194.194
+ C | AtW: 12.011 | %Mass: 0.4948041649072577
+ H | AtW: 1.008 | %Mass: 0.051906856030567376
+ N | AtW: 14.007 | %Mass: 0.28851560810323695
+ O | AtW: 15.999 | %Mass: 0.164773370958938
+END
+$
+```
+
 ### Later implementations?
 - Response if user enters a range numbers or weights. Such as entering ( AN 21-30 ) or ( AW 44.00-67.00 )
 - Elemental subgroups

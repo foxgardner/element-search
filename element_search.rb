@@ -15,7 +15,7 @@
             ["Al", "Aluminium", "13", "26.982", "Row3", "Col13", "Basic metal"],
             ["Si", "Silicon", "14", "28.085", "Row3", "Col14", "Semimetal"],
             ["P", "Phosphorus", "15", "30.974", "Row3", "Col15", "Nonmetal"],
-            ["S", "Sulfer", "16", "32.06", "Row3", "Col16", "Nonmetal"],
+            ["S", "Sulfur", "16", "32.06", "Row3", "Col16", "Nonmetal"],
             ["Cl", "Chlorine", '17', "35.45", "Row3", "Col17", "Halogen"],
             ["Ar", "Argon", "18", "39.948", "Row3", "Col18", "Noble gas"],
             ["K", "Potassium", "19", "39.098", "Row4", "Col1", "Alkali metal"],
@@ -132,12 +132,12 @@ def periodic_table
     puts " 7  [Fr][Ra] Ac [Rf][Db][Sg][Bh][Hs][Mt][Ds][Rg][Cn][Nh][Fl][Mc][Lv][Ts][Og]"
     puts " 7            [La][Ce][Pr][Nd][Pm][Sm][Eu][Gd][Tb][Dy][Ho][Er][Tm][Yb][Lu]  "
     puts " 7            [Ac][Th][Pa][U ][Np][Pu][Am][Cm][Bk][Cf][Es][Fm][Md][No][Lr]  "
-    $response = gets.chomp
+    $raw_response = gets.chomp
 end
 
 def random_element_helper elements, many_elements
     $objective = "random"
-    random_element_loop = $response[6, 99].strip.to_i
+    random_element_loop = $raw_response[6, 99].strip.to_i
     random_element_loop = 1 if random_element_loop == 0
     random_element_loop.times do
         many_elements.push(rand(elements.length).to_s)
@@ -174,30 +174,31 @@ def response_helper
     puts "   Element category    (Nonmetal)"
     puts ""
     puts "To calculate particles add 'particles' to the end of the element identifier."
-    puts "You can also enter single element ions."
     puts "                       (Oxygen particles)"
-    puts "                       (O particles)"
     puts "                       (O^2- particles)"
     puts ""
-    puts "Other commands"
+    puts "To calculate mass of molecules, simply enter the molecule."
+    puts "                       (C8H10N4O2 mass)"
+    puts ""
+    puts "Other commands:"
     puts "   table"
     puts "   random              (random9)"
-    $response = gets.chomp
+    $raw_response = gets.chomp
 end
 
 def ion_helper elements, applicable_elements
-    $script = $element[0...-2][-1, 1] if $element.include?("^")
-    $script = $element[0...-1][-1, 1] if $element.include?("_")
+    $script = $response[0...-2][-1, 1] if $response.include?("^")
+    $script = $response[0...-1][-1, 1] if $response.include?("_")
     if $script == "^"
-        $ion = $element[0...-3]
-        $charge = $element[-2, 2]
+        $ion = $response[0...-3]
+        $charge = $response[-2, 2]
         $charge_direction = $charge[-1, 1]
         $charge_strength = $charge[-2, 1].to_i
     elsif $script == "_"
-        $ion = $element[0...-2]
-        $prefix = $element[-1, 1]
+        $ion = $response[0...-2]
+        $prefix = $response[-1, 1]
     end
-    $element = $ion
+    $response = $ion
 end
 
 def electron_calculator elements, applicable_elements
@@ -248,6 +249,43 @@ def element_helper elements, applicable_elements
         puts output
     end
 end
+
+def molecular_mass_helper elements, many_elements
+    mass_elements = []
+    total_mass = 0
+    attomic_numbers = []
+    many_elements.length.times do |o|
+        mass_element = many_elements[o].tr("0-9", "")
+        mass_element_value = many_elements[o].delete("^0-9")
+        mass_element_value = 1 if mass_element_value == ""
+        elements.length.times do |i|
+            attomic_numbers.push(i) if elements[i].include?("#{mass_element}").to_s == "true"
+        end
+        atomic_number = attomic_numbers[o] unless attomic_numbers[o].nil?
+        mass_element_mass = elements[atomic_number][3].to_f
+
+        mass_elements.push(mass_element)
+        mass_elements.push(mass_element_value)
+        mass_elements.push(mass_element_mass)
+
+        total_mass += (mass_element_mass.to_f * mass_element_value.to_i)
+    end
+
+    output = ""
+    output << "#{$response}"
+    output << " | Mass: #{total_mass}"
+    tefm = (mass_elements.length / 3)
+    tefm.times do |n|
+        e = mass_elements[n*3]
+        ve = mass_elements[n*3+1]
+        me = mass_elements[n*3+2]
+        percent_of_molecular_mass = (me.to_f * ve.to_f) / total_mass.to_f
+        output << "\n #{e}"
+        output << " | AtW: #{me}"
+        output << " | %Mass: #{percent_of_molecular_mass}"
+    end
+    puts output
+end
  # End of Dictionary & Functions
 
  # Everything bellow strings the functions together to make it work.
@@ -256,21 +294,24 @@ loop do
     $objective = "find_elements"
     applicable_elements = []
     many_elements = []
-    $response = gets.chomp
-    response_helper if $response == "help"
-    periodic_table if $response == "table"
-    random_element_helper elements, many_elements if $response[0, 6] == "random"
+    $raw_response = gets.chomp
+    response_helper if $raw_response == "help"
+    periodic_table if $raw_response == "table"
+    random_element_helper elements, many_elements if $raw_response[0, 6] == "random"
 
-    if $response.include?(" particles")
+    if $raw_response.include?(" particles")
         $objective = "particles"
-        $element = $response[0...-10]
-        ion_helper elements, applicable_elements if $element.include?("^") || $element.include?("_")
+        $response = $raw_response[0...-10]
+        ion_helper elements, applicable_elements if $response.include?("^") || $response.include?("_")
+    elsif $raw_response.include?(" mass")
+        $objective = "mass"
+        $response = $raw_response[0...-5]
     else
-        $element = $response
+        $response = $raw_response
     end
     # parse_elements
     
-    $no_space_element = $element.delete(' ')
+    $no_space_element = $response.delete(' ')
 
     many_elements = $no_space_element.split /(?=[A-Z])/ if many_elements == []
 
@@ -280,5 +321,6 @@ loop do
 
     element_helper elements, applicable_elements if $objective == "find_elements" || $objective == "random"
     subatomic_helper elements, applicable_elements if $objective == "particles"
+    molecular_mass_helper elements, many_elements if $objective == "mass"
     puts "END"
 end
